@@ -1,44 +1,88 @@
-const Header = (props) => {
-  return <h1>{props.course}</h1>
-}
+import { useState } from 'react'
 
-const Part = (props) => {
+const Button = (props) => {
   return (
-    <>
-    <p>{props.part} {props.number}</p>
-    </>
+    <button onClick={props.onClick}>
+      {props.text}
+    </button>
   )
 }
 
-const Content = (props) => {
+const Statistics = (props) => {
+  if (props.total === 0) {
+    return (
+      <div>
+        No feedback given
+      </div>
+    )
+  }
   return (
-    <div>
-      <Part part={props.part1} number={props.number1}/>
-      <Part part={props.part2} number={props.number2}/>
-      <Part part={props.part3} number={props.number3}/>
-    </div>
+    <table>
+      <tbody>
+      <StatisticLine text='good' value={props.good}/>
+      <StatisticLine text='neutral' value={props.neutral}/>
+      <StatisticLine text='bad' value={props.bad}/>
+      <StatisticLine text='total' value={props.total}/>
+      <StatisticLine text='average' value={props.average}/>
+      <StatisticLine text='percentage' value={props.percentage}/>
+      </tbody>
+    </table>
   )
+} 
 
-}
-
-const Total = (props) => {
-  return <p>Number of exercises {props.total}</p>
+const StatisticLine = (props) => {
+    return (
+      <tr>
+        <td>{props.text}</td> <td>{props.value}{props.text === 'percentage' ? '%' : ''}</td>
+      </tr>
+    )
 }
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = 'Fundamentals of React'
-  const exercises1 = 10
-  const part2 = 'Using props to pass data'
-  const exercises2 = 7
-  const part3 = 'State of a component'
-  const exercises3 = 14
+
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+  const [total, setTotal] = useState(0)
+  const [average, setAverage] = useState(0)
+  const [percentage, setPercentage] = useState(0)
+
+  const handleGood = () => {
+    const updatedGood = good + 1
+    setGood(updatedGood)
+    const updatedTotal = total + 1
+    setTotal(updatedTotal)
+    setAverage(((updatedGood - bad) / updatedTotal).toFixed(1))
+    setPercentage((updatedGood / updatedTotal * 100).toFixed(1))
+  }
+
+  const handleNeutral = () => {
+    const updatedNeutral = neutral + 1
+    setNeutral(updatedNeutral)
+    const updatedTotal = total + 1
+    setTotal(updatedTotal)
+    setAverage(((good - bad) / updatedTotal).toFixed(1))
+    setPercentage((good / updatedTotal * 100).toFixed(1)) 
+  }
+
+  const handleBad = () => {
+    const updatedBad = bad + 1
+    setBad(updatedBad)
+    const updatedTotal = total + 1
+    setTotal(updatedTotal)
+    setAverage(((good - updatedBad) / updatedTotal).toFixed(1))
+    setPercentage((good / updatedTotal * 100).toFixed(1))
+  }
+
 
   return (
     <div>
-      <Header course={course}/>
-      <Content part1={part1} number1={exercises1} part2={part2} number2={exercises2} part3={part3} number3={exercises3}/>
-      <Total total={exercises1 + exercises2 + exercises3}/>
+      <h1>Give feedback</h1>
+      <Button onClick={handleGood} text='good'/>
+      <Button onClick={handleNeutral} text='neutral'/>
+      <Button onClick={handleBad} text='bad'/>
+      <h1>Statistics</h1>
+      <Statistics good={good} neutral={neutral} bad={bad} total={total} average={average} percentage={percentage}/>
     </div>
   )
 }
