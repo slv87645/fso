@@ -36,7 +36,7 @@ const App = () => {
       return currentValue > array[maxIndex] ? currentIndex : maxIndex;
     }, 0);
   }
-  
+
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
 
@@ -51,6 +51,7 @@ const App = () => {
       <p>{anecdotes[indexOfMax(votes)]}</p>
     </div>
   )
-}
+} 
+
 
 export default App
